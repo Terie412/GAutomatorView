@@ -15,12 +15,12 @@ public class Element {
     }
 
     public void setElementBound() throws Exception {
-        eb = Engine.getEngine("127.0.0.1", 53001, Controller.selected_serial, true).getElementBound(this);
+        eb = Engine.getEngine().getElementBound(this);
     }
 
     public ElementBound getElementBound() throws Exception{
         if (eb == null)
-            eb = Engine.getEngine("127.0.0.1", 53001, Controller.selected_serial, true).getElementBound(this);
+            eb = Engine.getEngine().getElementBound(this);
         return eb;
     }
 

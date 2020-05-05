@@ -12,16 +12,18 @@ import java.util.HashMap;
 
 public class Engine {
     private SocketClient socketClient;
-    private static Engine engine;
+    public static Engine engine;
+    private String address;
+    private int port;
+    private String serial;
 
-    private Engine(String address, int port, String serial) throws IOException {
+    public Engine(String address, int port, String serial) throws IOException {
         Device.forward(port, serial);
         socketClient = new SocketClient(address, port);
-
     }
 
-    public static Engine getEngine(String address, int port, String serial, boolean ifNew) throws IOException {
-        if (ifNew) engine = new Engine(address, port, serial);
+    public static Engine getEngine()
+    {
         return engine;
     }
 

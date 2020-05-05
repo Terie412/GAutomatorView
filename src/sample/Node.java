@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleStringProperty;
 import sample.utils.Element;
 import sample.utils.Engine;
 
@@ -15,8 +17,9 @@ public class Node {
     public HashMap<String, String> attrs;
     public Element e;
 
+
     public Element getElement() throws Exception {
-        if(e == null)e = Engine.getEngine("127.0.0.1",53001, Controller.selected_serial,true).findElement(fullpath);
+        if(e == null)e = Engine.getEngine().findElement(fullpath);
         return e;
     }
 

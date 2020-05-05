@@ -40,10 +40,10 @@
                   <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                      <children>
                         <TextField fx:id="textfield_fullpath" alignment="CENTER" prefHeight="23.0" prefWidth="999.0" />
-                        <TableView prefHeight="206.0" prefWidth="1000.0">
+                        <TableView fx:id="tableView" prefHeight="206.0" prefWidth="1000.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
+                            <TableColumn fx:id="col_key" prefWidth="136.0" text="属性类型" />
+                            <TableColumn fx:id="col_value" prefWidth="863.0" text="值" />
                           </columns>
                         </TableView>
                      </children>

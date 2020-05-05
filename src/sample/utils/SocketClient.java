@@ -68,18 +68,18 @@ public class SocketClient {
 
         byte[] readByte = new byte[length];
 
-        log.info("ready to read length: " + length);
+//        log.info("ready to read length: " + length);
         int offset = 0;
         while(length > 0)
         {
             int readlength = inputStream.read(readByte, offset, length);
-            log.info(String.valueOf(readlength));
+//            log.info(String.valueOf(readlength));
             length -= readlength;
             offset += readlength;
         }
 
         String readStr = new String(readByte, StandardCharsets.UTF_8);
-        log.info("\n"+readStr);
+//        log.info("\n"+readStr);
         return JSONObject.parseObject(readStr, HashMap.class);
     }
 }

@@ -25,6 +25,16 @@ public class ElementBound {
         return false;
     }
 
+    public String getLocationInfo()
+    {
+        return String.format("%d, %d", (int)x, (int)y);
+    }
+
+    public String getBounds()
+    {
+        return String.format("宽: %d, 高: %d", (int)width, (int)height);
+    }
+
     @Override
     public String toString() {
         return String.format("location=(%f ,%f) size=(%f %f)",x,y,width,height);

@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import org.dom4j.Attribute;
@@ -51,11 +52,18 @@ public class Controller implements Initializable {
     ImageView imageView;
     @FXML
     Label label_coordination;
+    @FXML
+    TableColumn<TableItem,String> col_key;
+    @FXML
+    TableColumn<TableItem, String> col_value;
+    @FXML
+    TableView<TableItem> tableView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        random = new Random();
         try {
+            random = new Random();
+            label_coordination.setText("0,  0");
             log = sample.utils.Logger.getLogger();
             log.info("I am running Initialization");
         } catch (IOException e) {
@@ -68,7 +76,8 @@ public class Controller implements Initializable {
                 log.info("当前设备号：" + newValue);
                 selected_serial = newValue;
                 try {
-                    engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
+                    engine = new Engine("127.0.0.1", 53001, selected_serial);
+                    Engine.engine = engine;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -78,9 +87,11 @@ public class Controller implements Initializable {
         treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Node>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<Node>> observable, TreeItem<Node> oldValue, TreeItem<Node> newValue) {
+                // 显示全路径
                 Node node = newValue.getValue();
                 textfield_fullpath.setText(node.fullpath);
 
+                // 红框标记
                 sample.utils.Element e = null;
                 try {
                     e = node.getElement();
@@ -88,6 +99,21 @@ public class Controller implements Initializable {
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
+
+                // 显示信息
+                ObservableList<TableItem> data = FXCollections.observableArrayList();
+                data.add(new TableItem("name", node.name));
+                data.add(new TableItem("components", node.attrsInfo().replace("|", ";  ")));
+                try {
+                    data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
+                    data.add(new TableItem("bounds", node.getElement().getElementBound().getBounds()));
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                col_key.setCellValueFactory(new PropertyValueFactory<>("key"));
+                col_value.setCellValueFactory(new PropertyValueFactory<>("value"));
+                tableView.setItems(data);
+//                tableView_elementInfo
             }
         });
 
@@ -133,12 +159,35 @@ public class Controller implements Initializable {
                 {
                     log.info("在！！！");
                     signImageWithRectangle(originalImage, eb);
-//                    break;
+                    boolean ret = focusOnElement(treeView.getRoot(), element);
+                    log.info("是否定位到了元素：" + ret);
+                    break;
                 }
             }
         });
 
-        label_coordination.setText("0,  0");
+    }
+
+    private boolean focusOnElement(TreeItem<Node> treeItem, sample.utils.Element element) {
+        if(treeItem.getValue().fullpath.equals(element.objectName))
+        {
+            treeView.getSelectionModel().select(treeItem);
+            int index = treeView.getSelectionModel().getSelectedIndex();
+            treeView.scrollTo(index);
+//            treeView.getFocusModel().
+            log.info("有没有聚焦到："+treeView.getFocusModel().isFocused(index));
+            return true;
+        }
+        ObservableList<TreeItem<Node>> children = treeItem.getChildren();
+        for(TreeItem<Node> child : children)
+        {
+            boolean ret = focusOnElement(child, element);
+            if(ret)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void signImageWithRectangle(Image image, ElementBound eb)
@@ -207,7 +256,7 @@ public class Controller implements Initializable {
     /// 同步
     @FXML
     void syncGameState(ActionEvent actionEvent) throws Exception {
-        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
+//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
         String xmlStr = engine.getDumpTree();
         log.info("控件树： " + xmlStr);
 
@@ -235,7 +284,7 @@ public class Controller implements Initializable {
 
         // 获取当前界面所有可点击的列表
         touchableElements = new ArrayList<>();
-        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
+//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
         ArrayList<sample.utils.Element> elements = engine.getTouchableElements();
         for(sample.utils.Element e : elements)
         {
@@ -245,13 +294,13 @@ public class Controller implements Initializable {
     }
 
     void traverseXML(Element root, Node node) {
-        Iterator iterator = root.elementIterator();
+        Iterator<Element> iterator = root.elementIterator();
         if (iterator.hasNext()) node.children = new ArrayList<Node>();
         while (iterator.hasNext()) {
             Node childNode = new Node();
             childNode.attrs = new HashMap<String, String>();
 
-            Element child = (Element) iterator.next();
+            Element child = iterator.next();
             List<Attribute> attrs = child.attributes();
             for (Attribute attr : attrs) {
                 String name = attr.getName();
@@ -310,7 +359,7 @@ public class Controller implements Initializable {
 
     @FXML
     void onButtonTestClick(ActionEvent actionEvent) throws Exception {
-        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
+//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
         sample.utils.Element e = engine.findElement("/UIRoot/UIHang/LoginWindow(Clone)/Center/AccountGroup.GO/Account.InputField");
         ElementBound eb = engine.getElementBound(e);
         log.info(eb.toString());
