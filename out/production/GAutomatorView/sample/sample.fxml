@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <BorderPane prefHeight="800.0" prefWidth="1200.0">
+         <top>
+            <Pane prefHeight="48.0" prefWidth="904.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ComboBox fx:id="combobox_devices" layoutX="480.0" layoutY="12.0" prefHeight="24.0" prefWidth="240.0" />
+                  <Pane layoutX="846.0" prefHeight="48.0" prefWidth="352.0">
+                     <children>
+                        <Button fx:id="button_test" layoutX="118.0" layoutY="13.0" mnemonicParsing="false" onAction="#onButtonTestClick" text="Test" />
+                        <Button layoutX="250.0" layoutY="13.0" mnemonicParsing="false" onAction="#refreshDevices" text="刷新设备列表" />
+                        <Button fx:id="button_sync" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#syncGameState" prefHeight="23.0" prefWidth="55.0" text="同步" />
+                     </children>
+                  </Pane>
+               </children>
+            </Pane>
+         </top>
+         <center>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <bottom>
+                  <Pane prefHeight="42.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="label_coordination" layoutX="14.0" layoutY="14.0" text="Label" />
+                        <Label layoutX="955.0" layoutY="14.0" text="Label" />
+                     </children>
+                  </Pane>
+               </bottom>
+               <center>
+                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="textfield_fullpath" alignment="CENTER" prefHeight="23.0" prefWidth="999.0" />
+                        <TableView prefHeight="206.0" prefWidth="1000.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </center>
+               <top>
+                  <Pane prefHeight="495.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fx:id="imageView" fitHeight="295.0" fitWidth="513.0" layoutX="238.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </Pane>
+               </top>
+            </BorderPane>
+         </center>
+         <left>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <bottom>
+                  <TreeView fx:id="treeView" prefHeight="726.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </bottom>
+               <top>
+                  <Pane prefHeight="27.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="textfield_pattern" prefHeight="23.0" prefWidth="142.0" />
+                        <Button fx:id="button_search" layoutX="142.0" mnemonicParsing="false" onAction="#searchNode" text="Search" />
+                     </children>
+                  </Pane>
+               </top>
+            </BorderPane>
+         </left>
+      </BorderPane>
+   </children>
+</Pane>

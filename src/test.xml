@@ -1,0 +1,5 @@
+<AbstractRoot id="0">
+    <GameObject name="Directional Light" components="Light" id="788"/>
+    <GameObject name="Main Camera" components="Camera|AudioListener" id="790"/>
+    <GameObject name="GameObject" components="U3DAutomationBehaviour" id="792"/>
+</AbstractRoot>
