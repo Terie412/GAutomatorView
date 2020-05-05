@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="GAutomatorView:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/GAutomatorView_jar</output-path>
+    <root id="archive" name="GAutomatorView.jar">
+      <element id="module-output" name="GAutomatorView" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/dom4j-2.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/fastjson-1.2.68.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/out/artifacts/SimpleJava_jar/SimpleJava.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
