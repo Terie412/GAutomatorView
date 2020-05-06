@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -44,6 +45,10 @@ public class Controller implements Initializable {
     Button button_search;
     @FXML
     Button button_test;
+    @FXML
+    Button button_sync;
+    @FXML
+    Button button_refresh;
     @FXML
     TextField textfield_pattern;
     @FXML
@@ -233,7 +238,7 @@ public class Controller implements Initializable {
     }
 
     /// 刷新设备列表
-    @FXML
+     @FXML
     void refreshDevices(ActionEvent actionEvent) throws IOException {
         String cmd = "devices -l";
         String ret = ShellUtils.execAdb(cmd, "");
@@ -248,6 +253,7 @@ public class Controller implements Initializable {
                 devices.add(device_serial);
             }
         }
+        if(devices.size() == 0)return;
         combobox_devices.setItems(devices);
         combobox_devices.getSelectionModel().select(0);
         selected_serial = combobox_devices.getSelectionModel().getSelectedItem();
