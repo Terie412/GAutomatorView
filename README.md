@@ -4,6 +4,8 @@ GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，�
 
 使用的时候，先获取设备列表，然后再同步游戏。
 
+![演示](./GAutomator演示.gif)
+
 ## Build Runnable Jar
 
 这个版本基于java 8 + intellij idea开发。java 11以前的版本sdk里面都是自带javaFX的库，如果你用的是java 11（>=）的版本，需要自行去官网下载javaFX的库导入并按教程配置configuration。
