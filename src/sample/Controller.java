@@ -11,6 +11,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.paint.Color;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -95,6 +98,11 @@ public class Controller implements Initializable {
                 // 显示全路径
                 Node node = newValue.getValue();
                 textfield_fullpath.setText(node.fullpath);
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+//                clipboard.setContent((Map<DataFormat, Object>) new ClipboardContent().put(DataFormat.PLAIN_TEXT, node.fullpath));
+                HashMap<DataFormat, Object> map = new HashMap<>();
+                map.put(DataFormat.PLAIN_TEXT, node.fullpath);
+                clipboard.setContent(map);
 
                 // 红框标记
                 sample.utils.Element e = null;
@@ -119,6 +127,7 @@ public class Controller implements Initializable {
                 col_value.setCellValueFactory(new PropertyValueFactory<>("value"));
                 tableView.setItems(data);
 //                tableView_elementInfo
+
             }
         });
 
