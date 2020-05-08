@@ -1,20 +1,29 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -61,11 +70,15 @@ public class Controller implements Initializable {
     @FXML
     Label label_coordination;
     @FXML
-    TableColumn<TableItem,String> col_key;
+    TableColumn<TableItem, String> col_key;
     @FXML
     TableColumn<TableItem, String> col_value;
     @FXML
     TableView<TableItem> tableView;
+    @FXML
+    AnchorPane rootAnchorPane;
+    @FXML
+    ProgressIndicator progressIndicator;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -131,36 +144,35 @@ public class Controller implements Initializable {
             }
         });
 
-        imageView.setOnMouseMoved(e->{
-            if(originalImage == null)return;
-            int x = (int)e.getX();
-            int y = (int)e.getY();
+        imageView.setOnMouseMoved(e -> {
+            if (originalImage == null) return;
+            int x = (int) e.getX();
+            int y = (int) e.getY();
 
 //            log.info("y="+y+","+e.getSceneY()+","+e.getScreenY());
 
-            double imageWidth =  originalImage.getWidth();
-            double imageHeight =  originalImage.getHeight();
+            double imageWidth = originalImage.getWidth();
+            double imageHeight = originalImage.getHeight();
 
-            x = (int)(x * (imageWidth/imageView.getFitWidth()));
-            y = (int)(y * (imageHeight/imageView.getFitHeight()));
+            x = (int) (x * (imageWidth / imageView.getFitWidth()));
+            y = (int) (y * (imageHeight / imageView.getFitHeight()));
 
             StringBuilder sb = new StringBuilder();
             label_coordination.setText(sb.append(x).append(",  ").append(y).toString());
         });
 
-        imageView.setOnMouseClicked(e->{
-            int x = (int)e.getX();
-            int y = (int)e.getY();
+        imageView.setOnMouseClicked(e -> {
+            int x = (int) e.getX();
+            int y = (int) e.getY();
 
             double imageWidth = originalImage.getWidth();
             double imageHeight = originalImage.getHeight();
 
-            x = (int)(x * (imageWidth/imageView.getFitWidth()));
-            y = (int)(y * (imageHeight/imageView.getFitHeight()));
+            x = (int) (x * (imageWidth / imageView.getFitWidth()));
+            y = (int) (y * (imageHeight / imageView.getFitHeight()));
 
-            log.info("点击了:("+x+","+y+")");
-            for(sample.utils.Element element : touchableElements)
-            {
+            log.info("点击了:(" + x + "," + y + ")");
+            for (sample.utils.Element element : touchableElements) {
                 ElementBound eb = null;
                 try {
                     eb = element.getElementBound();
@@ -168,9 +180,8 @@ public class Controller implements Initializable {
                     exception.printStackTrace();
                     continue;
                 }
-                log.info("是否在这里面：("+(eb.x - eb.width/2)+","+(eb.y-eb.height/2)+") ("+eb.width+","+eb.height+")");
-                if(eb.ifCoordinationInBound(x, y))
-                {
+                log.info("是否在这里面：(" + (eb.x - eb.width / 2) + "," + (eb.y - eb.height / 2) + ") (" + eb.width + "," + eb.height + ")");
+                if (eb.ifCoordinationInBound(x, y)) {
                     log.info("在！！！");
                     signImageWithRectangle(originalImage, eb);
                     boolean ret = focusOnElement(treeView.getRoot(), element);
@@ -180,66 +191,58 @@ public class Controller implements Initializable {
             }
         });
 
+
     }
 
     private boolean focusOnElement(TreeItem<Node> treeItem, sample.utils.Element element) {
-        if(treeItem.getValue().fullpath.equals(element.objectName))
-        {
+        if (treeItem.getValue().fullpath.equals(element.objectName)) {
             treeView.getSelectionModel().select(treeItem);
             int index = treeView.getSelectionModel().getSelectedIndex();
             treeView.scrollTo(index);
 //            treeView.getFocusModel().
-            log.info("有没有聚焦到："+treeView.getFocusModel().isFocused(index));
+            log.info("有没有聚焦到：" + treeView.getFocusModel().isFocused(index));
             return true;
         }
         ObservableList<TreeItem<Node>> children = treeItem.getChildren();
-        for(TreeItem<Node> child : children)
-        {
+        for (TreeItem<Node> child : children) {
             boolean ret = focusOnElement(child, element);
-            if(ret)
-            {
+            if (ret) {
                 return true;
             }
         }
         return false;
     }
 
-    void signImageWithRectangle(Image image, ElementBound eb)
-    {
-        if(image == null || eb == null)
-        {
+    void signImageWithRectangle(Image image, ElementBound eb) {
+        if (image == null || eb == null) {
             log.warning("image or elementbound is null");
             return;
         }
-        signImageWithRectangle(image, (int)(eb.x + eb.width/2), (int)(eb.y + eb.height/2), (int)eb.width, (int)eb.height);
+        signImageWithRectangle(image, (int) (eb.x + eb.width / 2), (int) (eb.y + eb.height / 2), (int) eb.width, (int) eb.height);
     }
 
-    void signImageWithRectangle(Image image, int x, int y, int recWidth, int recHeight)
-    {
+    void signImageWithRectangle(Image image, int x, int y, int recWidth, int recHeight) {
         /// 在 image 的 x,y 周围画一个宽高为 (recWidth, recHeight) 的矩形
-        int width = (int)image.getWidth();
-        int height = (int)image.getHeight();
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
 
-        x = x - recWidth/2;
-        y = y - recHeight/2;
+        x = x - recWidth / 2;
+        y = y - recHeight / 2;
 
         WritableImage newImage = new WritableImage(width, height);
         PixelReader pixelReader = image.getPixelReader();
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
-        for(int j =0;j< height;j++)
-        {
-            for(int i=0;i<width;i++)
-            {
-                if(((i==x || i==x+recWidth) && (j>=y && j<=y+recHeight)) || ((j==y || j==y+recHeight) && (i >=x && i <=x+recWidth))
-                    || ((i==x+1 || i==x+recWidth-1) && (j>=y+1 && j<=y+recHeight-1)) || ((j==y+1 || j==y-1+recHeight) && (i >=x+1 && i <=x-1+recWidth))
-                    || ((i==x+2 || i==x+recWidth-2) && (j>=y+2 && j<=y+recHeight-2)) || ((j==y+2 || j==y-2+recHeight) && (i >=x+2 && i <=x-2+recWidth)))
-                {
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                if (((i == x || i == x + recWidth) && (j >= y && j <= y + recHeight)) || ((j == y || j == y + recHeight) && (i >= x && i <= x + recWidth))
+                        || ((i == x + 1 || i == x + recWidth - 1) && (j >= y + 1 && j <= y + recHeight - 1)) || ((j == y + 1 || j == y - 1 + recHeight) && (i >= x + 1 && i <= x - 1 + recWidth))
+                        || ((i == x + 2 || i == x + recWidth - 2) && (j >= y + 2 && j <= y + recHeight - 2)) || ((j == y + 2 || j == y - 2 + recHeight) && (i >= x + 2 && i <= x - 2 + recWidth))) {
                     pixelWriter.setColor(i, j, Color.RED);
                     continue;
                 }
                 Color color = pixelReader.getColor(i, j);
-                pixelWriter.setColor(i, j , color);
+                pixelWriter.setColor(i, j, color);
             }
         }
 
@@ -247,8 +250,10 @@ public class Controller implements Initializable {
     }
 
     /// 刷新设备列表
-     @FXML
+    @FXML
     void refreshDevices(ActionEvent actionEvent) throws IOException {
+        LoadingStage loadingStage = new LoadingStage((Stage) rootAnchorPane.getScene().getWindow());
+        loadingStage.show();
         String cmd = "devices -l";
         String ret = ShellUtils.execAdb(cmd, "");
         log.info(ret);
@@ -262,50 +267,93 @@ public class Controller implements Initializable {
                 devices.add(device_serial);
             }
         }
-        if(devices.size() == 0)return;
+        if (devices.size() == 0) return;
         combobox_devices.setItems(devices);
         combobox_devices.getSelectionModel().select(0);
         selected_serial = combobox_devices.getSelectionModel().getSelectedItem();
+        loadingStage.close();
     }
 
-    /// 同步
+    /// 同步游戏状态，获取控件树和截图
     @FXML
     void syncGameState(ActionEvent actionEvent) throws Exception {
-//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
-        String xmlStr = engine.getDumpTree();
-        log.info("控件树： " + xmlStr);
+//        LoadingStage loadingStage = new LoadingStage((Stage) rootAnchorPane.getScene().getWindow());
+//        loadingStage.show();
+        progressIndicator.setProgress(0);
+        progressIndicator.setVisible(true);
 
-        rootNode = new Node();
 
-        // 构建控件树
-        Document document = DocumentHelper.parseText(xmlStr);
-        Element root = document.getRootElement();
-        rootNode.name = root.getName();
-        rootNode.fullpath = "";
-        log.info("root element: " + root.getName());
-        traverseXML(root, rootNode);
-        buildTreeView();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String xmlStr;
+                try{
+                    xmlStr = engine.getDumpTree();
+                    updateProgress(0.3);
 
-        // 开始截屏
-        log.info("开始截屏...");
-        Device.screenshot(selected_serial);
-        Image image = new Image("file:///D:/pictures/screenshot.png");
-        imageView.setImage(image);
-        imageView.setPreserveRatio(true);
-//        imageView.setFitWidth(image.getWidth());
-//        imageView.setFitHeight(image.getHeight());
-        imageView.setFitHeight(image.getHeight()*(imageView.getFitWidth()/image.getWidth()));
-        originalImage = image;
+                    // 构建控件树
+                    rootNode = new Node();
+                    Document document = DocumentHelper.parseText(xmlStr);
+                    Element root = document.getRootElement();
+                    rootNode.name = root.getName();
+                    rootNode.fullpath = "";
+                    log.info("root element: " + root.getName());
+                    traverseXML(root, rootNode);
 
-        // 获取当前界面所有可点击的列表
-        touchableElements = new ArrayList<>();
-//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
-        ArrayList<sample.utils.Element> elements = engine.getTouchableElements();
-        for(sample.utils.Element e : elements)
-        {
-            engine.getElementBound(e);
-            touchableElements.add(e);
-        }
+                    updateProgress(0.5);
+
+                    buildTreeView();
+                    Device.screenshot(selected_serial);
+                    Image image = new Image("file:///D:/pictures/screenshot.png");
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            // 开始截屏
+                            log.info("开始截屏...");
+                            try {
+                                imageView.setImage(image);
+                                imageView.setPreserveRatio(true);
+                                imageView.setFitHeight(image.getHeight() * (imageView.getFitWidth() / image.getWidth()));
+                                originalImage = image;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    updateProgress(0.6);
+
+                    // 获取当前界面所有可点击的列表
+                    touchableElements = new ArrayList<>();
+                    ArrayList<sample.utils.Element> elements = engine.getTouchableElements();
+                    for (sample.utils.Element e : elements) {
+                        engine.getElementBound(e);
+                        touchableElements.add(e);
+                    }
+                    updateProgress(1.0);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressIndicator.setVisible(false);
+                        }
+                    });
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    void updateProgress(double progress)
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                progressIndicator.setProgress(progress);
+            }
+        });
     }
 
     void traverseXML(Element root, Node node) {
@@ -336,7 +384,13 @@ public class Controller implements Initializable {
         TreeItem<Node> rootItem = new TreeItem<>();
         rootItem.setValue(rootNode);
         buildTreeItem(rootItem, rootNode);
-        treeView.setRoot(rootItem);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                treeView.setRoot(rootItem);
+            }
+        });
+
     }
 
     void buildTreeItem(TreeItem<Node> treeItem, Node node) {
@@ -374,18 +428,12 @@ public class Controller implements Initializable {
 
     @FXML
     void onButtonTestClick(ActionEvent actionEvent) throws Exception {
-//        engine = Engine.getEngine("127.0.0.1", 53001, selected_serial, true);
         sample.utils.Element e = engine.findElement("/UIRoot/UIHang/LoginWindow(Clone)/Center/AccountGroup.GO/Account.InputField");
         ElementBound eb = engine.getElementBound(e);
         log.info(eb.toString());
-//        ArrayList<sample.utils.Element> es = engine.getTouchableElements();
-//        for(sample.utils.Element e :es)
-//        {
-//            log.info(e.toString());
-//        }
         int y = 4;
         int height = 5;
-        float ret = y / (float)height;
+        float ret = y / (float) height;
         log.info(String.valueOf(ret));
     }
 }
