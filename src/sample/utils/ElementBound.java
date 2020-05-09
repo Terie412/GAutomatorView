@@ -32,7 +32,7 @@ public class ElementBound {
 
     public String getBounds()
     {
-        return String.format("宽: %d, 高: %d", (int)width, (int)height);
+        return String.format("宽: %d, 高: %d, Visible: %b", (int)width, (int)height, visible);
     }
 
     @Override

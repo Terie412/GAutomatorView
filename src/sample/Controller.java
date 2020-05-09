@@ -17,6 +17,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -188,6 +189,13 @@ public class Controller implements Initializable {
                     log.info("是否定位到了元素：" + ret);
                     break;
                 }
+            }
+        });
+
+        textfield_pattern.setOnKeyPressed(e->{
+            if(e.getCode() == KeyCode.ENTER)
+            {
+                searchNodeHandler();
             }
         });
 
@@ -404,6 +412,11 @@ public class Controller implements Initializable {
 
     @FXML
     public void searchNode(ActionEvent actionEvent) {
+        searchNodeHandler();
+    }
+
+    public void searchNodeHandler()
+    {
         TreeItem<Node> treeItem = treeView.getRoot();
         String pattern = textfield_pattern.getText();
         searchedTreeItems = new ArrayList<>();
