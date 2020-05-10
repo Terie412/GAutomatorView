@@ -37,7 +37,7 @@
             </StackPane>
             <StackPane alignment="CENTER_RIGHT" prefWidth="128.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ProgressIndicator fx:id="progressIndicator" progress="0.43" StackPane.alignment="CENTER">
+                  <ProgressIndicator fx:id="progressIndicator" progress="0.43" visible="false" StackPane.alignment="CENTER">
                      <StackPane.margin>
                         <Insets />
                      </StackPane.margin>
@@ -92,7 +92,7 @@
                                     </StackPane>
                                     <StackPane prefHeight="48.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="96.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <TextField fx:id="textfield_fullpath" alignment="CENTER" promptText="控件全路径" style="-fx-background-color: #ffffff;" />
+                                          <TextField fx:id="textfield_fullpath" alignment="CENTER" editable="false" promptText="控件全路径" style="-fx-background-color: #ffffff;" />
                                        </children>
                                     </StackPane>
                                  </children>
@@ -122,7 +122,7 @@
                            <children>
                               <StackPane prefHeight="48.0" prefWidth="192.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Label fx:id="label_coordination" text="Label" textFill="WHITE" />
+                                    <Label fx:id="label_coordination" text="0,  0" textFill="WHITE" />
                                  </children>
                               </StackPane>
                            </children>

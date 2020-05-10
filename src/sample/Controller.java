@@ -49,6 +49,7 @@ public class Controller implements Initializable {
     private ArrayList<TreeItem<Node>> searchedTreeItems;
     private Image originalImage;
     private ArrayList<sample.utils.Element> touchableElements;
+    private Scene messageWindow;
 
     @FXML
     ComboBox<String> combobox_devices;
@@ -85,9 +86,8 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             random = new Random();
-            label_coordination.setText("0,  0");
             log = sample.utils.Logger.getLogger();
-            log.info("I am running Initialization");
+            log.info("Initializing...");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -192,14 +192,11 @@ public class Controller implements Initializable {
             }
         });
 
-        textfield_pattern.setOnKeyPressed(e->{
-            if(e.getCode() == KeyCode.ENTER)
-            {
+        textfield_pattern.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
                 searchNodeHandler();
             }
         });
-
-
     }
 
     private boolean focusOnElement(TreeItem<Node> treeItem, sample.utils.Element element) {
@@ -207,8 +204,6 @@ public class Controller implements Initializable {
             treeView.getSelectionModel().select(treeItem);
             int index = treeView.getSelectionModel().getSelectedIndex();
             treeView.scrollTo(index);
-//            treeView.getFocusModel().
-            log.info("有没有聚焦到：" + treeView.getFocusModel().isFocused(index));
             return true;
         }
         ObservableList<TreeItem<Node>> children = treeItem.getChildren();
@@ -230,7 +225,6 @@ public class Controller implements Initializable {
     }
 
     void signImageWithRectangle(Image image, int x, int y, int recWidth, int recHeight) {
-        /// 在 image 的 x,y 周围画一个宽高为 (recWidth, recHeight) 的矩形
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
 
@@ -260,8 +254,7 @@ public class Controller implements Initializable {
     /// 刷新设备列表
     @FXML
     void refreshDevices(ActionEvent actionEvent) throws IOException {
-        LoadingStage loadingStage = new LoadingStage((Stage) rootAnchorPane.getScene().getWindow());
-        loadingStage.show();
+        rootAnchorPane.setMouseTransparent(true);
         String cmd = "devices -l";
         String ret = ShellUtils.execAdb(cmd, "");
         log.info(ret);
@@ -275,27 +268,28 @@ public class Controller implements Initializable {
                 devices.add(device_serial);
             }
         }
-        if (devices.size() == 0) return;
+        if (devices.size() == 0) {
+            MessageWindow.display("没有找到任何可用的设备\n请尝试重启adb");
+            return;
+        }
         combobox_devices.setItems(devices);
         combobox_devices.getSelectionModel().select(0);
         selected_serial = combobox_devices.getSelectionModel().getSelectedItem();
-        loadingStage.close();
+        rootAnchorPane.setMouseTransparent(false);
     }
 
     /// 同步游戏状态，获取控件树和截图
     @FXML
     void syncGameState(ActionEvent actionEvent) throws Exception {
-//        LoadingStage loadingStage = new LoadingStage((Stage) rootAnchorPane.getScene().getWindow());
-//        loadingStage.show();
+        rootAnchorPane.setMouseTransparent(true);
         progressIndicator.setProgress(0);
         progressIndicator.setVisible(true);
-
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String xmlStr;
-                try{
+                try {
                     xmlStr = engine.getDumpTree();
                     updateProgress(0.3);
 
@@ -340,26 +334,33 @@ public class Controller implements Initializable {
                         touchableElements.add(e);
                     }
                     updateProgress(1.0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            progressIndicator.setVisible(false);
+                            MessageWindow.display("同步游戏状态失败\n请尝试重新获取设备列表\n检查游戏是否启动\nGA sdk是否成功启动");
                         }
                     });
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
                 }
             }
         }).start();
+        rootAnchorPane.setMouseTransparent(false);
     }
 
-    void updateProgress(double progress)
-    {
+    void updateProgress(double progress) {
+        log.info("设置进度" + progress);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                if(progress >= 1.0)
+                {
+                    progressIndicator.setVisible(false);
+                    return;
+                }
                 progressIndicator.setProgress(progress);
+
             }
         });
     }
@@ -415,8 +416,7 @@ public class Controller implements Initializable {
         searchNodeHandler();
     }
 
-    public void searchNodeHandler()
-    {
+    public void searchNodeHandler() {
         TreeItem<Node> treeItem = treeView.getRoot();
         String pattern = textfield_pattern.getText();
         searchedTreeItems = new ArrayList<>();

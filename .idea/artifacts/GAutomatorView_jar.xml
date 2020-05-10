@@ -6,6 +6,7 @@
       <element id="library" level="project" name="SimpleJava" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/dom4j-2.0.3.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/fastjson-1.2.68.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/resources" />
     </root>
   </artifact>
 </component>
