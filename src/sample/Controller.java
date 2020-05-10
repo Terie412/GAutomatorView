@@ -40,8 +40,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class Controller implements Initializable {
-    private Random random;
-    private Logger log;
+    private static Random random;
+    private static Logger log;
+    private static ObservableList<String> devices;
     public static String selected_serial;
     private Engine engine;
     private Node rootNode;
@@ -92,57 +93,48 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
 
-        combobox_devices.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                log.info("当前设备号：" + newValue);
-                selected_serial = newValue;
-                try {
-                    engine = new Engine("127.0.0.1", 53001, selected_serial);
-                    Engine.engine = engine;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        combobox_devices.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            log.info("当前设备号：" + newValue);
+            selected_serial = newValue;
+            try {
+                engine = new Engine("127.0.0.1", 53001, selected_serial);
+                Engine.engine = engine;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 
-        treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Node>>() {
-            @Override
-            public void changed(ObservableValue<? extends TreeItem<Node>> observable, TreeItem<Node> oldValue, TreeItem<Node> newValue) {
-                // 显示全路径
-                Node node = newValue.getValue();
-                textfield_fullpath.setText(node.fullpath);
-                Clipboard clipboard = Clipboard.getSystemClipboard();
-//                clipboard.setContent((Map<DataFormat, Object>) new ClipboardContent().put(DataFormat.PLAIN_TEXT, node.fullpath));
-                HashMap<DataFormat, Object> map = new HashMap<>();
-                map.put(DataFormat.PLAIN_TEXT, node.fullpath);
-                clipboard.setContent(map);
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // 显示全路径
+            Node node = newValue.getValue();
+            textfield_fullpath.setText(node.fullpath);
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            HashMap<DataFormat, Object> map = new HashMap<>();
+            map.put(DataFormat.PLAIN_TEXT, node.fullpath);
+            clipboard.setContent(map);
 
-                // 红框标记
-                sample.utils.Element e = null;
-                try {
-                    e = node.getElement();
-                    signImageWithRectangle(originalImage, e.getElementBound());
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
-                // 显示信息
-                ObservableList<TableItem> data = FXCollections.observableArrayList();
-                data.add(new TableItem("name", node.name));
-                data.add(new TableItem("components", node.attrsInfo().replace("|", ";  ")));
-                try {
-                    data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
-                    data.add(new TableItem("bounds", node.getElement().getElementBound().getBounds()));
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-                col_key.setCellValueFactory(new PropertyValueFactory<>("key"));
-                col_value.setCellValueFactory(new PropertyValueFactory<>("value"));
-                tableView.setItems(data);
-//                tableView_elementInfo
-
+            // 红框标记
+            sample.utils.Element e = null;
+            try {
+                e = node.getElement();
+                signImageWithRectangle(originalImage, e.getElementBound());
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
+
+            // 显示信息
+            ObservableList<TableItem> data = FXCollections.observableArrayList();
+            data.add(new TableItem("name", node.name));
+            data.add(new TableItem("components", node.attrsInfo().replace("|", ";  ")));
+            try {
+                data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
+                data.add(new TableItem("bounds", node.getElement().getElementBound().getBounds()));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            col_key.setCellValueFactory(new PropertyValueFactory<>("key"));
+            col_value.setCellValueFactory(new PropertyValueFactory<>("value"));
+            tableView.setItems(data);
         });
 
         imageView.setOnMouseMoved(e -> {
@@ -259,7 +251,7 @@ public class Controller implements Initializable {
         String ret = ShellUtils.execAdb(cmd, "");
         log.info(ret);
 
-        ObservableList<String> devices = FXCollections.observableArrayList();
+        devices = FXCollections.observableArrayList();
         String[] lines = ret.split("\n");
         for (String line : lines) {
             if (line.contains("device product") && !line.contains("offline")) {
