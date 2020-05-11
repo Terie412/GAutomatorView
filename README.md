@@ -22,10 +22,12 @@ GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，�
 8. Build
 9. Build Artifacts
 
+不过执行jar的方式还是有点不方便。工程生成exe可以用javafxpackager.exe，这个工具在jdk的目录下有。在某个版本之后，这个工具被统一进javapackager.exe了，用来统一java和javaFx的打包。具体的打包命令可以去网上参考。
+
 ## 后话
 
 第一版是2020五一五天假期抽空写的。第一天用WPF写，最后竟然卡在了TreeView不知道如何遍历元素的问题上；
 
 第二第三天经过调研，于是临时学了html,css,javascript，然后又学了vue.js，打算用electron+vue.js写一套，卡在了构建环境的问题上，不仅如此，javascript弱类型，原型链设计模式，ES6对模块化编程的支持让我很感到蛋疼。
 
-最后两天终于像javaFX妥协，不过据说Oracle到2022年就不再对javaFX进行商业支持了。
+最后两天终于像javaFX妥协，不过据说Oracle到2022年就不再对javaFX进行商业支持了。无论如何，学习javaFX只是为了解决燃眉之急，现在大型的软件开发几乎都是使用QT开发，而一些轻量级的软件则用类似electron这样的技术，毕竟html + css那套绘制一套漂亮的客户端太方便了。等有时间，会好好抽空学学前端技术，再用electron做一个版本。
