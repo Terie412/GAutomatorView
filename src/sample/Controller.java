@@ -97,7 +97,8 @@ public class Controller implements Initializable {
             log.info("当前设备号：" + newValue);
             selected_serial = newValue;
             try {
-                engine = new Engine("127.0.0.1", 53001, selected_serial);
+                int port = random.nextInt(1000);
+                engine = new Engine("127.0.0.1", 53001 + port, selected_serial);
                 Engine.engine = engine;
             } catch (IOException e) {
                 e.printStackTrace();
