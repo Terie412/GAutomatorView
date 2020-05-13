@@ -2,9 +2,11 @@
 
 GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，代码全部开源。它可以帮助你获取游戏中的控件信息。当前仅支持Unity游戏，而且使用工具的时候，游戏需要运行在一个Android设备或者模拟器上。腾讯推荐的GAView不仅不开源，而且有一些问题。比如在一台主机上连接着多台Android设备的时候，会出现连接错误的问题。这也是我打算自己写一个开源版本的原因。
 
-使用的时候，先获取设备列表，然后再同步游戏。
+使用的时候，先获取设备列表，然后再同步游戏状态。
 
-![演示](./GAutomator演示.gif)
+为了方便测试，这个[仓库 - UnityDemo-TestGAutomatorView](https://github.com/qintianchen/UnityDemo-TestGAutomatorView)是一个现成的Unity项目，里面有一个已经构建好的[apk](https://github.com/qintianchen/UnityDemo-TestGAutomatorView/blob/master/Demo.apk)。你可以选择下载这个apk，安装到安卓设备上进行测试。如下图所示：
+
+![图片一](./Doc/Pictures/3.png)
 
 ## Build Runnable Jar
 
