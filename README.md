@@ -24,7 +24,7 @@ GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，�
 8. Build
 9. Build Artifacts
 
-不过执行jar的方式还是有点不方便。工程生成exe可以用javafxpackager.exe，这个工具在jdk的目录下有。在某个版本之后，这个工具被统一进javapackager.exe了，用来统一java和javaFx的打包。具体的打包命令可以去网上参考。
+如果你配置了java 8的环境变量，就可以直接点击jar文件执行了。否则就需要一个整合了java运行环境的exe，但是那玩意儿确实太大了。
 
 ## 后话
 
