@@ -26,6 +26,18 @@ GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，�
 
 如果你配置了java 8的环境变量，就可以直接点击jar文件执行了。否则就需要一个整合了java运行环境的exe，但是那玩意儿确实太大了。
 
+## Build Exe
+
+1. File
+2. Project Structure
+3. Artifacts
+4. \+
+5. JavaFxApplication/From modules...
+6. Output Layout 中添加引用第三方库(libs 目录)
+7. JavaFx 标签页下设置Application Class为sample.Main，设置Native Bundle为all
+8. Build
+9. Build Artifacts
+
 ## 后话
 
 第一版是2020五一五天假期抽空写的。第一天用WPF写，最后竟然卡在了TreeView不知道如何遍历元素的问题上；
