@@ -15,6 +15,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("GAutomatorView");
         primaryStage.setScene(new Scene(root, 1720, 960));
+        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/resources/robot_hand.png")));
         primaryStage.show();
     }
 
