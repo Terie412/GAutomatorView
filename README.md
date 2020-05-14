@@ -38,6 +38,10 @@ GAutomator的辅助工具GAutomatorView的个人开发版本，基于javaFX，�
 8. Build
 9. Build Artifacts
 
+Build好Exe之后，拷贝[exe文件的父级目录](./out/artifacts/GAutomatorView_javafx/bundles/GAutomatorView_javafx)到任何地方，然后运行里面的Exe文件就行了。
+
+正如上面所说的一样，这个目录99%的大小都是打包进里面的Java运行时贡献的，剩下1%才是真正的主体工程。
+
 ## 后话
 
 第一版是2020五一五天假期抽空写的。第一天用WPF写，最后竟然卡在了TreeView不知道如何遍历元素的问题上；
