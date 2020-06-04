@@ -44,6 +44,7 @@ public class Controller implements Initializable {
     private static Logger log;
     private static ObservableList<String> devices;
     public static String selected_serial;
+    private static boolean if_get_screencap;
     private Engine engine;
     private Node rootNode;
     private TreeItem<Node> selectTreeItem;
@@ -277,6 +278,7 @@ public class Controller implements Initializable {
         rootAnchorPane.setMouseTransparent(true);
         progressIndicator.setProgress(0);
         progressIndicator.setVisible(true);
+        if_get_screencap = false;
 
         new Thread(new Runnable() {
             @Override
@@ -298,6 +300,7 @@ public class Controller implements Initializable {
                     updateProgress(0.5);
 
                     buildTreeView();
+
                     Device.screenshot(selected_serial);
                     Image image = new Image("file:///D:/pictures/screenshot.png");
                     Platform.runLater(new Runnable() {
@@ -311,6 +314,7 @@ public class Controller implements Initializable {
                                 imageView.setPreserveRatio(true);
                                 imageView.setFitHeight(image.getHeight() * (imageView.getFitWidth() / image.getWidth()));
                                 originalImage = image;
+                                if_get_screencap = true;
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -329,11 +333,36 @@ public class Controller implements Initializable {
                     updateProgress(1.0);
                 } catch (Exception e) {
                     e.printStackTrace();
-
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             MessageWindow.display("同步游戏状态失败\n请尝试重新获取设备列表\n检查游戏是否启动\nGA sdk是否成功启动");
+                            if(!if_get_screencap){
+                                try {
+                                    Device.screenshot(selected_serial);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                                Image image = new Image("file:///D:/pictures/screenshot.png");
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // 开始截屏
+                                        log.info("开始截屏...");
+                                        try {
+                                            imageView.setImage(image);
+                                            imageView.setPreserveRatio(true);
+                                            imageView.setFitHeight(image.getHeight() * (imageView.getFitWidth() / image.getWidth()));
+                                            originalImage = image;
+                                            if_get_screencap = true;
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        progressIndicator.setVisible(false);
+                                    }
+                                });
+                            }
+                            progressIndicator.setVisible(false);
                         }
                     });
                 }
@@ -347,8 +376,7 @@ public class Controller implements Initializable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(progress >= 1.0)
-                {
+                if (progress >= 1.0) {
                     progressIndicator.setVisible(false);
                     return;
                 }
