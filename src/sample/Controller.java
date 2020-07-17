@@ -52,6 +52,7 @@ public class Controller implements Initializable {
     private Image originalImage;
     private ArrayList<sample.utils.Element> touchableElements;
     private Scene messageWindow;
+    private int globalIndex;
 
     @FXML
     ComboBox<String> combobox_devices;
@@ -127,7 +128,7 @@ public class Controller implements Initializable {
             // 显示信息
             ObservableList<TableItem> data = FXCollections.observableArrayList();
             data.add(new TableItem("name", node.name));
-            data.add(new TableItem("components", node.attrsInfo().replace("|", ";  ")));
+            data.add(new TableItem("components", node.attrsInfo()));
             try {
                 data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
                 data.add(new TableItem("bounds", node.getElement().getElementBound().getBounds()));
@@ -167,6 +168,8 @@ public class Controller implements Initializable {
             y = (int) (y * (imageHeight / imageView.getFitHeight()));
 
             log.info("点击了:(" + x + "," + y + ")");
+            List<ElementBound> nowEBS = new ArrayList<ElementBound>();
+            List<sample.utils.Element> nowEB = new ArrayList<sample.utils.Element>();
             for (sample.utils.Element element : touchableElements) {
                 ElementBound eb = null;
                 try {
@@ -175,15 +178,15 @@ public class Controller implements Initializable {
                     exception.printStackTrace();
                     continue;
                 }
-                log.info("是否在这里面：(" + (eb.x - eb.width / 2) + "," + (eb.y - eb.height / 2) + ") (" + eb.width + "," + eb.height + ")");
                 if (eb.ifCoordinationInBound(x, y)) {
-                    log.info("在！！！");
-                    signImageWithRectangle(originalImage, eb);
-                    boolean ret = focusOnElement(treeView.getRoot(), element);
-                    log.info("是否定位到了元素：" + ret);
-                    break;
+                    nowEB.add(element);
+                    nowEBS.add(eb);
                 }
             }
+
+            globalIndex = globalIndex + 1 >= nowEB.size() ? 0 : globalIndex + 1 ;
+            signImageWithRectangle(originalImage, nowEBS.get(globalIndex));
+            boolean ret = focusOnElement(treeView.getRoot(), nowEB.get(globalIndex));
         });
 
         textfield_pattern.setOnKeyPressed(e -> {
@@ -191,6 +194,12 @@ public class Controller implements Initializable {
                 searchNodeHandler();
             }
         });
+
+        try {
+            refreshDevices();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean focusOnElement(TreeItem<Node> treeItem, sample.utils.Element element) {
@@ -247,7 +256,11 @@ public class Controller implements Initializable {
 
     /// 刷新设备列表
     @FXML
-    void refreshDevices(ActionEvent actionEvent) throws IOException {
+    void eventRefreshDevices(ActionEvent actionEvent) throws IOException {
+        refreshDevices();
+    }
+
+    void refreshDevices() throws IOException{
         rootAnchorPane.setMouseTransparent(true);
         String cmd = "devices -l";
         String ret = ShellUtils.execAdb(cmd, "");
@@ -271,6 +284,8 @@ public class Controller implements Initializable {
         selected_serial = combobox_devices.getSelectionModel().getSelectedItem();
         rootAnchorPane.setMouseTransparent(false);
     }
+
+
 
     /// 同步游戏状态，获取控件树和截图
     @FXML

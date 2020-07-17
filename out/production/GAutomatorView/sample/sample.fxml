@@ -28,7 +28,7 @@
                         <Font size="15.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_refresh" mnemonicParsing="false" onAction="#refreshDevices" style="-fx-background-color: #8BC34A;" text="Update" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
+                  <Button fx:id="button_refresh" mnemonicParsing="false" onAction="#eventRefreshDevices" style="-fx-background-color: #8BC34A;" text="Update" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
                      <StackPane.margin>
                         <Insets left="242.0" />
                      </StackPane.margin>

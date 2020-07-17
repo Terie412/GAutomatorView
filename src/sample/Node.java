@@ -32,10 +32,14 @@ public class Node {
     {
         if(attrs == null)return "";
         StringBuilder ret = new StringBuilder();
-        for(String value : attrs.values())
+        for(String key : attrs.keySet())
         {
-            ret.append(value);
+            ret.append(key).append("=").append(attrs.get(key)).append("  ");
         }
+//        for(String value : attrs.values())
+//        {
+//            ret.append(value);
+//        }
         return ret.toString();
     }
 }
