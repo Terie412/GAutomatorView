@@ -118,10 +118,12 @@ public class Controller implements Initializable {
 
             // 红框标记
             sample.utils.Element e = null;
+            ElementBound eb = null;
             try {
-//                e = node.getElement();
                 e = new sample.utils.Element(node.name, node.id);
-                signImageWithRectangle(originalImage, e.getElementBound());
+                eb = e.getElementBound();
+                assert eb != null;
+                signImageWithRectangle(originalImage, eb);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -132,8 +134,9 @@ public class Controller implements Initializable {
             data.add(new TableItem("id", String.valueOf(node.id)));
             data.add(new TableItem("components", node.attrsInfo()));
             try {
-                data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
-                data.add(new TableItem("bounds", node.getElement().getElementBound().getBounds()));
+                assert eb != null;
+                data.add(new TableItem("location", eb.getLocationInfo()));
+                data.add(new TableItem("bounds", eb.getBounds()));
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
