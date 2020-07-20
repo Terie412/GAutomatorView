@@ -282,6 +282,7 @@ public class Controller implements Initializable {
         }
         if (devices.size() == 0) {
             MessageWindow.display("没有找到任何可用的设备\n请尝试重启adb");
+            rootAnchorPane.setMouseTransparent(false);
             return;
         }
         combobox_devices.setItems(devices);
