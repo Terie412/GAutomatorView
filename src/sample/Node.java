@@ -14,6 +14,7 @@ public class Node {
 
     public String name;
     public String fullpath;
+    public int id;
     public HashMap<String, String> attrs;
     public Element e;
 
@@ -36,10 +37,6 @@ public class Node {
         {
             ret.append(key).append("=").append(attrs.get(key)).append("  ");
         }
-//        for(String value : attrs.values())
-//        {
-//            ret.append(value);
-//        }
         return ret.toString();
     }
 }

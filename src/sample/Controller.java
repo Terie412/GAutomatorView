@@ -119,7 +119,8 @@ public class Controller implements Initializable {
             // 红框标记
             sample.utils.Element e = null;
             try {
-                e = node.getElement();
+//                e = node.getElement();
+                e = new sample.utils.Element(node.name, node.id);
                 signImageWithRectangle(originalImage, e.getElementBound());
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -128,6 +129,7 @@ public class Controller implements Initializable {
             // 显示信息
             ObservableList<TableItem> data = FXCollections.observableArrayList();
             data.add(new TableItem("name", node.name));
+            data.add(new TableItem("id", String.valueOf(node.id)));
             data.add(new TableItem("components", node.attrsInfo()));
             try {
                 data.add(new TableItem("location", node.getElement().getElementBound().getLocationInfo()));
@@ -285,8 +287,6 @@ public class Controller implements Initializable {
         rootAnchorPane.setMouseTransparent(false);
     }
 
-
-
     /// 同步游戏状态，获取控件树和截图
     @FXML
     void syncGameState(ActionEvent actionEvent) throws Exception {
@@ -413,6 +413,10 @@ public class Controller implements Initializable {
             for (Attribute attr : attrs) {
                 String name = attr.getName();
                 if (attr.getName().equals("name")) childNode.name = attr.getValue();
+                else if(attr.getName().equals("id"))
+                {
+                    childNode.id = Integer.parseInt(attr.getValue());
+                }
                 else {
                     String value = attr.getValue();
                     value = attr.getStringValue();
