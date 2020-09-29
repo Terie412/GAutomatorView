@@ -189,7 +189,7 @@ public class Controller implements Initializable {
                 }
             }
 
-            globalIndex = globalIndex + 1 >= nowEB.size() ? 0 : globalIndex + 1 ;
+            globalIndex = globalIndex + 1 >= nowEB.size() ? 0 : globalIndex + 1;
             signImageWithRectangle(originalImage, nowEBS.get(globalIndex));
             boolean ret = focusOnElement(treeView.getRoot(), nowEB.get(globalIndex));
         });
@@ -265,7 +265,7 @@ public class Controller implements Initializable {
         refreshDevices();
     }
 
-    void refreshDevices() throws IOException{
+    void refreshDevices() throws IOException {
         rootAnchorPane.setMouseTransparent(true);
         String cmd = "devices -l";
         String ret = ShellUtils.execAdb(cmd, "");
@@ -306,6 +306,9 @@ public class Controller implements Initializable {
                 try {
                     xmlStr = engine.getDumpTree();
                     updateProgress(0.3);
+
+//                    log.info("xmlStr = \n" + xmlStr);
+                    xmlStr = xmlStr.replace("&", "_");
 
                     // 构建控件树
                     rootNode = new Node();
@@ -356,7 +359,7 @@ public class Controller implements Initializable {
                         @Override
                         public void run() {
                             MessageWindow.display("同步游戏状态失败\n请尝试重新获取设备列表\n检查游戏是否启动\nGA sdk是否成功启动");
-                            if(!if_get_screencap){
+                            if (!if_get_screencap) {
                                 try {
                                     Device.screenshot(selected_serial);
                                 } catch (IOException ex) {
@@ -417,11 +420,9 @@ public class Controller implements Initializable {
             for (Attribute attr : attrs) {
                 String name = attr.getName();
                 if (attr.getName().equals("name")) childNode.name = attr.getValue();
-                else if(attr.getName().equals("id"))
-                {
+                else if (attr.getName().equals("id")) {
                     childNode.id = Integer.parseInt(attr.getValue());
-                }
-                else {
+                } else {
                     String value = attr.getValue();
                     value = attr.getStringValue();
                     childNode.attrs.put(attr.getName(), attr.getValue());
