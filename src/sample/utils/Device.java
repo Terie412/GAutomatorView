@@ -12,7 +12,7 @@ public class Device {
     public static void screenshot(String serial) throws IOException {
         String cmd = "shell screencap -p /sdcard/screen.png";
         String ret = ShellUtils.execAdb(cmd, serial);
-        cmd = "pull /sdcard/screen.png D:/pictures/screenshot.png";
+        cmd = "pull /sdcard/screen.png D:screenshot.png";
         ret = ShellUtils.execAdb(cmd, serial);
     }
 }

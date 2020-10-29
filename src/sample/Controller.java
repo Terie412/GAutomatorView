@@ -324,7 +324,7 @@ public class Controller implements Initializable {
                     buildTreeView();
 
                     Device.screenshot(selected_serial);
-                    Image image = new Image("file:///D:/pictures/screenshot.png");
+                    Image image = new Image("file:///D:screenshot.png");
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -365,7 +365,7 @@ public class Controller implements Initializable {
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
                                 }
-                                Image image = new Image("file:///D:/pictures/screenshot.png");
+                                Image image = new Image("file:///D:screenshot.png");
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
